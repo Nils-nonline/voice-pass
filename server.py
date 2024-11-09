@@ -1,9 +1,11 @@
 import eventlet
 from eventlet import wsgi
 import socketio
+import io
 
 hostName = "localhost"
 serverPort = 8080
+
 
 sio = socketio.Server()
 app = socketio.WSGIApp(sio, static_files={
@@ -16,7 +18,9 @@ def connect(sid, environ):
 
 @sio.event
 def audio(sid, data):
-    print('audio', data)
+    print('audiodata:',data)
+    with open('myfile.wav', mode='bx') as f:
+        f.write(data["wav"])
     sio.emit('newaudio',{'data': 'nodata!'})
 
 @sio.event
