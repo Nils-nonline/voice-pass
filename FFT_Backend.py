@@ -45,8 +45,8 @@ def heatmap(data, sr, window):
     return heatmap_reference
 
 # # Load .wav file
-file_path_reference = "R1.wav"
-file_path_test = "Passwort1.wav"
+file_path_reference = "Passwort1.wav"
+file_path_test = "Passwort2.wav"
 
 #generate the audio data arrays
 sr_reference, data_reference = wavfile.read(file_path_reference)
@@ -73,18 +73,39 @@ heatmap_difference = heatmap_reference * heatmap_test
 difference = heatmap_difference.sum()
 print(difference)
 
-plt.imshow(heatmap_reference, cmap='viridis', aspect='auto')
-plt.colorbar(label="Intensity")
-plt.title("Heatmap of 2D Array")
-plt.xlabel("Width (Columns)")
-plt.ylabel("Length (Rows)")
-plt.show()
+#print heatmap
+# plt.imshow(heatmap_reference, cmap='viridis', aspect='auto')
+# plt.colorbar(label="Intensity")
+# plt.title("Heatmap of 2D Array")
+# plt.xlabel("Width (Columns)")
+# plt.ylabel("Length (Rows)")
+# plt.show()
+
+final_Ergebnis = False
+
+if difference > 1000000000:
+    final_Ergebnis = True
+
+
+
+
 
 # plt.grid()
 # plt.show()
 
-# Password 1 vs. 2: 21500418.995733652
+# Password 1 vs. 2:     21 500 418.995733652
 
-# R1 vs2:           1444998502.0170355
-# R1 vs Password1   70505219.04345512
+# R1 vs R2              14 44 998 502.0170355
+# R1 vs Password1       70 505 219.04345512
+# R1 vs 1234            92 294 141.56733859
+
+# Kaenguru 1 vs. 2      1 931 719 177.0528028
+# Kaenguru 1 vs. R1     584 873 830.8646038
+# Kaenguru 1 vs. Meau1: 69 507 944.55388303
+
+# Meau1 vs. Meau2:      25 935 883.854302727
+# Meau 1 vs. Hilfe 1:   9 769 465.01539137
+
+
+
 
