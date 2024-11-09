@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>unbenannt</title>
+<meta name="generator" content="Geany 2.0" />
+</head>
+
+<body>
+	<h1>Hi there!</h1>
+<script>
+const constraints = {
+    'video': false,
+    'audio': true
+}
+navigator.mediaDevices.getUserMedia(constraints)
+    .then(stream => {
+        console.log('Got MediaStream:', stream);
+    })
+    .catch(error => {
+        console.error('Error accessing media devices.', error);
+    });
+function getConnectedDevices(type, callback) {
+    navigator.mediaDevices.enumerateDevices()
+        .then(devices => {
+            const filtered = devices.filter(device => device.kind === type);
+            callback(filtered);
+        });
+}
+
+getConnectedDevices('videoinput', cameras => console.log('Cameras found', cameras));
+</script>
+</body>
+
+</html>
