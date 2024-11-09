@@ -3,30 +3,88 @@ from scipy.io import wavfile
 from scipy.fft import fft, fftfreq, fftshift
 import numpy as np
 
+# create reference
+
+def FFT_VP(data, sr):
+    N = len(data)
+    T = 1 / sr
+    x = list(range(len(data)))
+    y = data
+    yf = fft(y)
+    xf = fftfreq(N, T)
+    xf = fftshift(xf)
+    yplot = fftshift(yf)
+    yplot = 1.0/N * np.abs(yplot)
+    Abschnitt = len(yplot)/2
+    Abschnitt = np.int16(Abschnitt)
+    yplot = yplot[Abschnitt:]
+    xf = xf[Abschnitt:]
+    # plt.plot(xf, 1.0/N * np.abs(yplot))
+    # plt.plot(FFT_Ergebnis_reference)
+    # plt.plot(FFT_Ergebnis_test)   
+
+    return yplot
+
+def heatmap(data, sr, window):
+    lenth = np.int16((len(data) / window))
+    hmwith = np.int16(window/2)
+
+    heatmap_reference = np.zeros((lenth,hmwith))
+
+    # fill heat map
+    start = 0
+    for i in range(lenth):
+    # while start+window < lenth:   
+        end = start + window
+        data_cut = data[start:end]
+        heatmap_reference[i] = FFT_VP(data_cut, sr)
+        # print(heatmap_reference[i])
+        # print()
+
+        start = start + window
+    return heatmap_reference
 
 # # Load .wav file
-file_path = "Sample_3.wav"  # Replace with your .wav file path
-sampling_rate, audio_data = wavfile.read(file_path)
+file_path_reference = "R1.wav"
+file_path_test = "Passwort1.wav"
 
-audio_data = audio_data[:,0]
-audio_data = audio_data[20000:60000]
+#generate the audio data arrays
+sr_reference, data_reference = wavfile.read(file_path_reference)
+data_reference = data_reference[:,0]
+# data_reference = data_reference[:20000]
+sr_test, data_test = wavfile.read(file_path_test)
+data_test = data_test[:,0]
+# data_test = data_test[0:20000]
 
-N = len(audio_data)
+if len(data_reference) > len(data_test):
+    data_reference = data_reference[:len(data_test)]
+else:
+    data_test = data_test[:len(data_reference)]
 
-# sample spacing
-T = 1 / sampling_rate
-x = list(range(len(audio_data)))
-y = audio_data
-yf = fft(y)
-xf = fftfreq(N, T)
-xf = fftshift(xf)
-yplot = fftshift(yf)
-yplot = 1.0/N * np.abs(yplot)
-Abschnitt = len(yplot)/2
-Abschnitt = np.int16(Abschnitt)
-yplot = yplot[Abschnitt:]
-xf = xf[Abschnitt:]
-plt.plot(xf, yplot)
-# plt.plot(xf, 1.0/N * np.abs(yplot))
-plt.grid()
+# print(len(data_reference))
+# print(len(data_test))
+
+Window = 1000
+heatmap_reference = heatmap(data_reference, sr_reference, Window)
+heatmap_test = heatmap(data_test, sr_test, Window)
+
+heatmap_difference = heatmap_reference * heatmap_test
+# create hat map
+difference = heatmap_difference.sum()
+print(difference)
+
+plt.imshow(heatmap_reference, cmap='viridis', aspect='auto')
+plt.colorbar(label="Intensity")
+plt.title("Heatmap of 2D Array")
+plt.xlabel("Width (Columns)")
+plt.ylabel("Length (Rows)")
 plt.show()
+
+# plt.grid()
+# plt.show()
+
+# Password 1 vs. 2: 21500418.995733652
+
+# R1 vs2:           1444998502.0170355
+# R1 vs Password1   70505219.04345512
+
