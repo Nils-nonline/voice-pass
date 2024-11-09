@@ -1,32 +1,20 @@
-import eventlet
-from eventlet import wsgi
-import socketio
-import io
-import base64
-hostName = "localhost"
-serverPort = 8080
+from flask import Flask
+from flask_socketio import SocketIO
+import os
 
+app = Flask(__name__)
+socketio = SocketIO(app, cors_allowed_origins="*")
+UPLOAD_FOLDER = 'uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+index = 0;
 
-sio = socketio.Server()
-app = socketio.WSGIApp(sio, static_files={
-'/': {'content_type': 'text/html', 'filename': 'index.html'}
-})
-
-@sio.event
-def connect(sid, environ):
-	print('connect ', sid)
-
-@sio.event
-def audio(sid, data):
-	print('audiodata:',data['blob'])
-	encoded = data['blob'].encode()
-	content = base64.b64decode(encoded)
-	with open('data.wav', 'wb') as fw:
-		fw.write(content)
-
-@sio.event
-def disconnect(sid):
-    print('disconnect ', sid)
+@socketio.on('audio')
+def handle_audio(data):
+    print(data["d"])
+    audio_path = os.path.join(UPLOAD_FOLDER, 'audio'+str(data["index"])+'.wav')
+    with open(audio_path, 'ab') as f:
+        f.write(data["d"])
+	index = data["index"]
 
 if __name__ == '__main__':
-    eventlet.wsgi.server(eventlet.listen((hostName, serverPort)), app)
+    socketio.run(app, host='0.0.0.0', port=1337)

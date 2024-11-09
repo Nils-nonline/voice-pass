@@ -7,18 +7,21 @@
 </head>
 
 <body>
-	<h1>Hi there!</h1>
+	<h1>Voice-Pass</h1>
 	<button id="record">Record audio</button>
-	<script type="importmap">
-	  {
-		"imports": {
-		  "socket.io-client": "https://cdn.socket.io/4.8.0/socket.io.esm.min.js"
-		}
-	  }
+	<script src = "https://cdn.socket.io/4.0.0/socket.io.min.js">
+	 
 	</script>
-	<script type="module">
-		import { io } from "socket.io-client";
-		const socket = io();
+	<script>
+		const socket = io("http://localhost:1337");
+		var index = 0;
+		var chunks = [];
+		async function convert2DataUrl(blobOrFile){
+			let reader = new FileReader()
+			reader.readAsDataURL(blobOrFile)
+			await new Promise(resolve => reader.onload = function(){ resolve() })
+			return reader.result
+		}
 		
 		if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 			console.log("getUserMedia supported.");
@@ -35,16 +38,8 @@
 		} else {
 			alert("getUserMedia not supported on your browser!");
 		}
-		var duration = 100
-		function array2b64( buffer ) {
-			var binary = '';
-			var bytes = new Uint8Array( buffer );
-			var len = bytes.byteLength;
-			for (var i = 0; i < len; i++) {
-				binary += String.fromCharCode( bytes[ i ] );
-			}
-			return window.btoa( binary );
-		}
+		var duration = 1000
+		
 
 		function success(stream){
 			const mediaRecorder = new MediaRecorder(stream);
@@ -65,23 +60,26 @@
 			};
 
 			mediaRecorder.ondataavailable = (e) => {
-				try{
-					var blob = new Blob([e.data], { 'type' : 'audio/wav; codecs=0' });
-					blob.arrayBuffer().then((data) => {
-						var intArray = data
-						console.log(String(intArray));
-						socket.emit("audio",{"blob":array2b64(intArray)});
-						})
-					console.log("worked")
+				//try{
+					console.log("file")
+					chunks.push(e.data)
+					var blob = new Blob(chunks, { 'type' : 'audio/wav; codecs=0' });
+					//const reader = new FileReader();
+					//var data = await convert2DataUrl(blob)
 					
+					socket.emit('audio', {"d":blob,"index":index});
+					index++;
 					
-				}catch(e){
-					console.log("wrong")
-				}
+				
+				/*}catch(e){
+					console.log(e.stack)
+				}*/
 			  
 			};
 		}
-
+		
+		
+		
 		socket.on("connect", () => {
 		  console.log(socket.connected); // true
 		});
