@@ -5,7 +5,6 @@ import socketio
 hostName = "localhost"
 serverPort = 8080
 
-
 sio = socketio.Server()
 app = socketio.WSGIApp(sio, static_files={
     '/': {'content_type': 'text/html', 'filename': 'index.html'}
