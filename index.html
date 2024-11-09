@@ -36,6 +36,16 @@
 			alert("getUserMedia not supported on your browser!");
 		}
 		var duration = 100
+		function array2b64( buffer ) {
+			var binary = '';
+			var bytes = new Uint8Array( buffer );
+			var len = bytes.byteLength;
+			for (var i = 0; i < len; i++) {
+				binary += String.fromCharCode( bytes[ i ] );
+			}
+			return window.btoa( binary );
+		}
+
 		function success(stream){
 			const mediaRecorder = new MediaRecorder(stream);
 			var record = document.getElementById("record");
@@ -57,10 +67,10 @@
 			mediaRecorder.ondataavailable = (e) => {
 				try{
 					var blob = new Blob([e.data], { 'type' : 'audio/wav; codecs=0' });
-					blob.bytes().then((data) => {
-						var intArray = new Uint8Array(data)
-						console.log(intArray);
-						socket.emit("audio",{"blob": []+intArray});
+					blob.arrayBuffer().then((data) => {
+						var intArray = data
+						console.log(String(intArray));
+						socket.emit("audio",{"blob":array2b64(intArray)});
 						})
 					console.log("worked")
 					

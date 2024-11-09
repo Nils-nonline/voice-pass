@@ -2,26 +2,27 @@ import eventlet
 from eventlet import wsgi
 import socketio
 import io
-
+import base64
 hostName = "localhost"
 serverPort = 8080
 
 
 sio = socketio.Server()
 app = socketio.WSGIApp(sio, static_files={
-    '/': {'content_type': 'text/html', 'filename': 'index.html'}
+'/': {'content_type': 'text/html', 'filename': 'index.html'}
 })
 
 @sio.event
 def connect(sid, environ):
-    print('connect ', sid)
+	print('connect ', sid)
 
 @sio.event
 def audio(sid, data):
-    print('audiodata:',data)
-    with open('myfile.wav', mode='bx') as f:
-        f.write(data["wav"])
-    sio.emit('newaudio',{'data': 'nodata!'})
+	print('audiodata:',data['blob'])
+	encoded = data['blob'].encode()
+	content = base64.b64decode(encoded)
+	with open('data.wav', 'wb') as fw:
+		fw.write(content)
 
 @sio.event
 def disconnect(sid):
