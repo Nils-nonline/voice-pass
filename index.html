@@ -38,7 +38,7 @@
 		} else {
 			alert("getUserMedia not supported on your browser!");
 		}
-		var duration = 1000
+		var duration = 100
 		
 
 		function success(stream){
@@ -70,7 +70,6 @@
 					socket.emit('audio', {"d":blob,"index":index});
 					index++;
 					
-				
 				/*}catch(e){
 					console.log(e.stack)
 				}*/
