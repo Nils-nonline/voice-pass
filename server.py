@@ -15,5 +15,6 @@ def handle_audio(data):
 	with open(audio_path, 'ab') as f:
 		f.write(data["d"])
 	index = data["index"]
+
 if __name__ == '__main__':
-	socketio.run(app, host='0.0.0.0', port=1337)
+    socketio.run(app, host='0.0.0.0', port=1337)
