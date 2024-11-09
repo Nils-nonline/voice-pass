@@ -46,7 +46,7 @@ def heatmap(data, sr, window):
 
 # # Load .wav file
 file_path_reference = "Passwort1.wav"
-file_path_test = "Passwort2.wav"
+file_path_test = "Schokolade.wav"
 
 #generate the audio data arrays
 sr_reference, data_reference = wavfile.read(file_path_reference)
@@ -71,15 +71,16 @@ heatmap_test = heatmap(data_test, sr_test, Window)
 heatmap_difference = heatmap_reference * heatmap_test
 # create hat map
 difference = heatmap_difference.sum()
+difference = difference / len(heatmap_reference)
 print(difference)
 
-#print heatmap
-# plt.imshow(heatmap_reference, cmap='viridis', aspect='auto')
-# plt.colorbar(label="Intensity")
-# plt.title("Heatmap of 2D Array")
-# plt.xlabel("Width (Columns)")
-# plt.ylabel("Length (Rows)")
-# plt.show()
+# #print heatmap-ly<dgi
+plt.imshow(heatmap_reference, cmap='viridis', aspect='auto')
+plt.colorbar(label="Intensity")
+plt.title("Heatmap of 2D Array")
+plt.xlabel("Width (Columns)")
+plt.ylabel("Length (Rows)")
+plt.show()
 
 final_Ergebnis = False
 
@@ -87,6 +88,12 @@ if difference > 1000000000:
     final_Ergebnis = True
 
 
+
+
+
+# Mit Teilung durch die Länge:
+#Passwort1 vs Passwort2             796311.814656802
+#Passwort1 vs Schokolade            892040.3398877878         
 
 
 
