@@ -2,11 +2,23 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>unbenannt</title>
-<meta name="generator" content="Geany 2.0" />
+<title>Voice-Pass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
 <style>
+* {
+	font-family: "Montserrat", sans-serif;
+	font-optical-sizing: auto;
+	font-weight: 400;
+	font-style: normal;
+}
+
+h1 {
+	font-size: 30pt;
+}
 button{
-	font-size: 15px;
+	font-size: 15pt;
 	display: block;
 	padding: 13px;
 	border: none;
@@ -20,14 +32,24 @@ button{
 
 <body>
 	<div style="display: flex;justify-content: center;align-items: center; flex-direction:column">
-		<h1> Record your new voice pass.</h1><br>
-		<button id="record">Record voice pass.</button><br>
+		<h1>Lock your Accounts with your Voice</h1><br><br>
+		<button id="record">Create a new Voice Password.</button><br>
+		<a href="index.html">Login with a Voice Password.</a><br>
 	</div>
 	<script src = "https://cdn.socket.io/4.0.0/socket.io.min.js">
 	 
 	</script>
 	
 	<script>
+		var record = document.getElementById("record");
+		num = Math.round(Math.random() * 10)
+		var audio = new Audio('output'+num+'.wav');
+		console.log(audio)
+		
+		audio.addEventListener('canplaythrough', () => {
+			record.classList.remove("disabled");
+			}, false);
+			
 		const socket = io("http://localhost:1337");
 		var index = 0;
 		var chunks = [];
@@ -53,26 +75,27 @@ button{
 		} else {
 			alert("getUserMedia not supported on your browser!");
 		}
-		var duration = 100
 		
 
 		function success(stream){
 			const mediaRecorder = new MediaRecorder(stream);
 			var record = document.getElementById("record");
-			
 			record.onclick = () => {
 				if(mediaRecorder.state == "recording"){
-					var blob = new Blob(chunks, { 'type' : 'audio/wav; codecs=0' });
-					socket.emit('pass', {"d":blob,"index":index});
 					mediaRecorder.stop();
+					audio.pause();
 					console.log(mediaRecorder.state);
 					console.log("recorder stopped");
 					record.style.color = "white";
 				}else{
-					mediaRecorder.start(duration);
+					mediaRecorder.start();
 					console.log(mediaRecorder.state);
 					console.log("recorder started");
 					record.style.color = "red";
+					audio.play();
+					audio.onended = function() {
+						audio.play();
+					};
 				}
 			};
 
@@ -80,22 +103,19 @@ button{
 				//try{
 					console.log("file")
 					chunks.push(e.data)
+					var blob = new Blob(chunks, { 'type' : 'audio/wav; codecs=0' });
 					//const reader = new FileReader();
 					//var data = await convert2DataUrl(blob)
+					
+					socket.emit('pass', {"d":blob,"index":index});
 					index++;
+					
 				/*}catch(e){
 					console.log(e.stack)
 				}*/
 			  
 			};
 		}
-		
-		
-		
-		socket.on("connect", () => {
-		  console.log(socket.connected); // true
-		});
-		
 		
 		
 	</script>

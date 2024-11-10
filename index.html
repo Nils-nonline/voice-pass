@@ -50,7 +50,8 @@ button{
 		//audio.play();
 		var hasPlayed = false;
 		var record = document.getElementById("record");
-		var audio = new Audio('output.wav');
+		num = Math.round(Math.random() * 10)
+		var audio = new Audio('output'+num+'.wav');
 		console.log(audio)
 		
 		audio.addEventListener('canplaythrough', () => {
