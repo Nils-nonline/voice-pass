@@ -88,7 +88,7 @@ button{
 					console.log("recorder stopped");
 					record.style.color = "white";
 				}else{
-					mediaRecorder.start();
+					mediaRecorder.start(100);
 					console.log(mediaRecorder.state);
 					console.log("recorder started");
 					record.style.color = "red";
