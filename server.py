@@ -5,6 +5,10 @@ import random
 import json
 from random_noise import Random as ran
 import FFT_Backend as fft
+import librosa
+import soundfile as sf
+from pydub import AudioSegment
+
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 index = 0;
@@ -21,6 +25,8 @@ def handle_audio(data):
 	f = open("audio.wav","wb")
 	f.write(data["d"])
 	f.close()
+	song = AudioSegment.from_wav("never_gonna_give_you_up.wav")
+	song.export("audio.wav", format="wav")
 	if confirm("audio.wav",'pass.wav'):
 		socketio.emit("valid",{})
 		try:
