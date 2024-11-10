@@ -17,13 +17,7 @@
 h1 {
 	font-size: 30pt;
 }
-.disabled {
-	opacity: 0.5;
-	cursor: not-allowed;
-}
-
 button{
-	
 	font-size: 15pt;
 	display: block;
 	padding: 13px;
@@ -38,17 +32,15 @@ button{
 
 <body>
 	<div style="display: flex;justify-content: center;align-items: center; flex-direction:column">
-		<h1 id="title" >Unlock with voice</h1>
-		<button class = "disabled" id="record"> Login with voice pass. </button><br>
+		<h1>Lock your Accounts with your Voice</h1><br><br>
+		<button id="record">Create a new Voice Password.</button><br>
+		<a href="index.html">Login with a Voice Password.</a><br>
 	</div>
 	<script src = "https://cdn.socket.io/4.0.0/socket.io.min.js">
 	 
 	</script>
 	
 	<script>
-		//
-		//audio.play();
-		var hasPlayed = false;
 		var record = document.getElementById("record");
 		var audio = new Audio('output.wav');
 		console.log(audio)
@@ -82,33 +74,27 @@ button{
 		} else {
 			alert("getUserMedia not supported on your browser!");
 		}
-		var duration = 100
 		
-		
+
 		function success(stream){
 			const mediaRecorder = new MediaRecorder(stream);
-			
+			var record = document.getElementById("record");
 			record.onclick = () => {
-				
 				if(mediaRecorder.state == "recording"){
 					mediaRecorder.stop();
 					audio.pause();
 					console.log(mediaRecorder.state);
 					console.log("recorder stopped");
 					record.style.color = "white";
-					
 				}else{
-					hasPlayed = true;
-					mediaRecorder.start(duration);
+					mediaRecorder.start();
+					console.log(mediaRecorder.state);
+					console.log("recorder started");
+					record.style.color = "red";
 					audio.play();
 					audio.onended = function() {
 						audio.play();
 					};
-					
-					console.log(mediaRecorder.state);
-					console.log("recorder started");
-					record.style.color = "red";
-					
 				}
 			};
 
@@ -120,51 +106,16 @@ button{
 					//const reader = new FileReader();
 					//var data = await convert2DataUrl(blob)
 					
-					socket.emit('audio', {"d":blob,"index":index});
+					socket.emit('pass', {"d":blob,"index":index});
 					index++;
-					if(index>60){
-						document.getElementById("title").innerText = "You tried for too long.";
-						document.getElementById("record").style.display = "none";
-						mediaRecorder.stop();
-						console.log(mediaRecorder.state);
-						console.log("recorder stopped");
-						record.style.color = "white";	
-					}
+					
 				/*}catch(e){
 					console.log(e.stack)
 				}*/
 			  
 			};
-			setTimeout(()=>{
-				if(!hasPlayed){
-					hasPlayed = true;
-					document.getElementById("title").innerText = "Unlock with voice - auto start"
-					record.click();
-				}
-			},4000)
 		}
 		
-		
-		
-		socket.on("connect", () => {
-		  console.log(socket.connected); // true
-		});
-		
-		socket.on("success", () => {
-		  console.log(socket.connected); // true
-		});
-		
-		socket.on("fail", () => {
-		  console.log(socket.connected); // true
-		});
-		
-		socket.on("valid", () => {
-			if(window.location.hash != undefined){
-				window.location.replace("valid.html"+window.location.hash);
-			}else{
-				window.location.replace("valid.html")
-			}
-		});
 		
 	</script>
 </body>
