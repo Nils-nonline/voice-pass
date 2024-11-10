@@ -68,11 +68,50 @@ Window = 1000
 heatmap_reference = heatmap(data_reference, sr_reference, Window)
 heatmap_test = heatmap(data_test, sr_test, Window)
 
-heatmap_difference = heatmap_reference * heatmap_test
+def normalize_with_median(array):
+    median = np.median(array)
+    mad = np.median(np.abs(array - median))  # Calculate the Median Absolute Deviation
+    #print(mad)
+    
+    # Avoid division by zero by setting mad to a small number if it's zero
+    mad = mad if mad != 0 else 1e-10
+    
+    normalized_array = (array - median) / mad
+    return normalized_array
+
+heatmap_reference_normalized = normalize_with_median(heatmap_reference)
+heatmap_test_normalized = normalize_with_median(heatmap_test)
+heatmap_reference = heatmap_reference_normalized
+heatmap_test_normalized = heatmap_test_normalized
+
+# plt.imshow(heatmap_reference_normalized, cmap='viridis', aspect='auto')
+# plt.colorbar(label="Intensity")
+# plt.title("Heatmap of 2D Array")
+# plt.xlabel("Width (Columns)")
+# plt.ylabel("Length (Rows)")
+# plt.show()
+
+# heatmap_difference = heatmap_reference * heatmap_test
 # create hat map
-difference = heatmap_difference.sum()
-difference = difference / len(heatmap_reference)
-print(difference)
+# difference = heatmap_difference.sum()
+# difference = difference / len(heatmap_reference)
+# print(difference)
+
+
+Autokorrelation = np.zeros(len(heatmap_reference))
+Window_Ak = 20
+for i in range((len(heatmap_reference)-Window_Ak)):
+    for ii in range(Window_Ak):
+        Help = (np.sum(heatmap_reference[ii] * heatmap_test[ii + i]))
+        Autokorrelation[i] = Autokorrelation[i] + Help
+max_point = max(Autokorrelation)
+
+
+print(max_point)
+# plt.plot(Autokorrelation)
+# plt.show()
+
+
 
 # #print heatmap-ly<dgi
 plt.imshow(heatmap_reference, cmap='viridis', aspect='auto')
@@ -82,10 +121,13 @@ plt.xlabel("Width (Columns)")
 plt.ylabel("Length (Rows)")
 plt.show()
 
-final_Ergebnis = False
 
-if difference > 1000000000:
-    final_Ergebnis = True
+
+
+# With normalasation:
+
+
+
 
 
 
@@ -94,8 +136,6 @@ if difference > 1000000000:
 # Mit Teilung durch die Länge:
 #Passwort1 vs Passwort2             796311.814656802
 #Passwort1 vs Schokolade            892040.3398877878         
-
-
 
 # plt.grid()
 # plt.show()
