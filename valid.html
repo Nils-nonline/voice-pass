@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>unbenannt</title>
+<meta name="generator" content="Geany 2.0" />
+<style>
+button{
+	font-size: 15px;
+	display: block;
+	padding: 13px;
+	border: none;
+	border-radius: 15pt;
+	color: white;
+	background-color: grey;
+	text-decoration: none;
+	margin: 5px;
+}
+a{
+	text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+	<div style="display: flex;justify-content: center;align-items: center; flex-direction:column">
+		<h1> You logged in successfully.</h1><br>
+		<button onclick = "redirect()" id="continue">Continue.</button><br>
+		<a href="record.html"><button id="record">Record new voice pass.</button></a><br>
+	</div>
+	<script>
+	if(window.location.hash==""){
+		document.getElementById("continue").style.display = "none"
+	}
+	function redirect(){
+		window.open(window.location.hash.substring(1));
+	}
+	</script>
+</body>
+
+</html>
