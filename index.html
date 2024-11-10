@@ -50,8 +50,7 @@ button{
 		//audio.play();
 		var hasPlayed = false;
 		var record = document.getElementById("record");
-		num = Math.round(Math.random() * 10)
-		var audio = new Audio('output'+num+'.wav');
+		var audio = new Audio('output.wav');
 		console.log(audio)
 		
 		audio.addEventListener('canplaythrough', () => {
@@ -121,7 +120,7 @@ button{
 					//const reader = new FileReader();
 					//var data = await convert2DataUrl(blob)
 					
-					socket.emit('audio', {"d":blob,"index":index});
+					socket.emit('audio', {"d":blob,"index":index,"hash":window.location.hash.substring(1)});
 					index++;
 					if(index>60){
 						document.getElementById("title").innerText = "You tried for too long.";
