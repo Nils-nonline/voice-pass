@@ -11,8 +11,9 @@ for i in range(0,11):
 	ran(44100,72000,index=i)
 print("...starting server")
 def confirm(audio,passw):
-	random.randint(0,3)==1#fft.check(audio,passw)
+	result = random.randint(0,3)==1#fft.check(audio,passw)
 	os.remove(audio)
+	return result
 
 @socketio.on('audio')
 def handle_audio(data):
